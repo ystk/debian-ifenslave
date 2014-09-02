@@ -1,0 +1,7 @@
+Originally, the Linux kernel documentation contained a file named "ifenslave.c"
+which could be used to add/remove slaves from a bonding master. However, this
+tool has very little features, and what it does can also be done much simpler
+by writing the names of interfaces to enslave to
+/sys/class/net/$master/bonding/slaves. Therefore, the binary has now been
+replaced by a shell script which accepts the same options as the original
+binary.
