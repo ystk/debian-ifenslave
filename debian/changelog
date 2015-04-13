@@ -1,3 +1,13 @@
+ifenslave (2.6) unstable; urgency=low
+
+  * Added support for "packets_per_slave" option in interface stanza
+    (Closes: #758913); Thanks, John Holland.
+  * README.Debian:
+    + added note regarding "udev renaming issue".
+    + added "see also" note with link to "Bonding" section of wiki.
+
+ -- Dmitry Smirnov <onlyjob@debian.org>  Sun, 31 Aug 2014 11:05:09 +1000
+
 ifenslave (2.5) unstable; urgency=low
 
   * "ifupdown (>= 0.7.46)" compatibility update (Closes: #742410).

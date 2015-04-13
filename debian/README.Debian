@@ -13,7 +13,7 @@ You can also enslave interfaces using Debian's /etc/network/interfaces file:
 - You can specify in the stanza of a bonding interface which slaves it
   has.
 - You can specify in the stanza of a regular interface that it should be
-  enslaved to a bonding master. 
+  enslaved to a bonding master.
 - You can setup the master interface mode and any other possible attribute
   of the master in the stanza of a bonding interface or in the stanza of
   the slaves of this interface.
@@ -220,6 +220,54 @@ corresponding bond-* option exists to write into them.
 
 Please report a bug on package ifenslave-2.6, if one of them happens to become
 writable but no corresponding bond-* option exist.
+
+--------------------------------------------------------------------------------
+
+udev renaming issue
+===================
+
+"udev" assign network adapter names as per
+
+    /etc/udev/rules.d/70-persistent-net.rules
+
+where rule typically looks like this:
+
+    # PCI device 0x10ec:0x8168 (r8169)
+    SUBSYSTEM=="net", ACTION=="add", DRIVERS=="?*", ATTR{address}=="xx:xx:xx:xx:xx:xx", ATTR{dev_id}=="0x0", ATTR{type}=="1", KERNEL=="eth*", NAME="eth0"
+
+The problem with bonding is that two or more NICs may have the very same
+MAC address which confuses udev when it tries to (re)name adapters as per
+their MACs and fails because another card with this MAC already exists.
+When it happens NIC may be left named like "rename2" instead of "eth0" etc.
+
+Possible solution is to change udev rule to assign network interface names
+as per NICs PCI IDs instead of MAC addresses. This can be done by replacing
+
+    ATTR{address}=="xx:xx:xx:xx:xx:xx"
+
+with something like
+
+    KERNELS=="0000:04:00.0"
+
+in the file "70-persistent-net.rules".
+Corresponding PCI IDs can be found in dmesg:
+
+    sudo dmesg | grep eth
+
+Where one can look for line fragment like this:
+
+    r8169 0000:04:00.0 eth0: RTL8168e/8111e
+#         ^^^^^^^^^^^^
+
+Alternatively PCI IDs can be found using `lspci -D | grep Ether`:
+
+    0000:04:00.0 Ethernet controller: Realtek Semiconductor Co., Ltd. RTL8111/8168/8411 PCI Express Gigabit Ethernet Controller (rev 06)
+#   ^^^^^^^^^^^^
+
+--------------------------------------------------------------------------------
+
+See also:
+    https://wiki.debian.org/Bonding
 
 --------------------------------------------------------------------------------
 

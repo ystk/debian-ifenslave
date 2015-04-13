@@ -138,6 +138,9 @@ setup_master()
 	# Mode should be set after miimon or arp_interval, to avoid a warning in syslog.
 	sysfs_change_down mode "$IF_BOND_MODE"
 
+	# packets_per_slave allowed for mode balance-rr only.
+	sysfs packets_per_slave "$IF_BOND_PACKETS_PER_SLAVE"
+
 	# arp_validate must be after mode (because mode must be active-backup).
 	sysfs arp_validate "$IF_BOND_ARP_VALIDATE"
 
